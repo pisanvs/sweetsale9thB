@@ -4,10 +4,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     mode: "development",
-    entry: [
-        "./src/index.js",
-        "./src/inflow.js"
-    ],
+    entry: {
+        index: "./src/index.js",
+        inflow: "./src/inflow.js",
+        auth: "./src/auth.js"
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: "[name].bundle.js",
@@ -30,6 +31,8 @@ function generateHtmlPlugins(templateDir) {
     return new HtmlWebpackPlugin({
       template: templatePath,
       filename: name,
+      inject: 'body',
+      chunks: [name.replace('.html', '')]
     });
   });
 }
