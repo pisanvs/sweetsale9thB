@@ -1,0 +1,99 @@
+/* Reset default styles for better consistency */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f1f1;
+    line-height: 1.6;
+    height: 100vh;
+}
+
+/* Center the content */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: max-content;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.link-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.link-btn:hover {
+    background-color: #45A344;
+}
+
+/* Highlighted container for the content */
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: max-content;
+    position: relative;
+    top: 40%;
+}
+
+/* Center the content */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.link-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+
+.link-btn:hover {
+    background-color: #45A344;
+}
+
+/* Add responsive styles for smaller screens */
+@media only screen and (max-width: 600px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    .link-btn {
+        padding: 8px 16px;
+    }
+}

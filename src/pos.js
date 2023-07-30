@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, updateDoc, increment, arrayUnion } from "firebase/firestore";
 import { auth, db } from './firebase'
 
 import "./styles/inflow.css"
@@ -10,6 +10,8 @@ auth.onAuthStateChanged(async (user) => {
         window.location = "/auth.html"
     }
 
+    console.log(user)
+
     const querySnapshot = await getDocs(query(collection(db, "authorized_users"), where("email", "==", user.email)))
     let isAuthorized = !querySnapshot.empty;
 })
@@ -18,35 +20,42 @@ function dec2hex(dec) {
     return dec.toString(16).padStart(2, "0")
 }
 
-function generateCode(name) {
-    var arr = new Uint8Array((5) / 2)
+function generateId() {
+    var arr = new Uint8Array((16) / 2)
     window.crypto.getRandomValues(arr)
-    return (name.charAt(0) + Array.from(arr, dec2hex).join('')).toLowerCase();
+    return (Array.from(arr, dec2hex).join('')).toLowerCase();
 }
 
 async function submit(e) {
     e.preventDefault();
-    let nameInput = document.querySelector("#name-input");
-    let mailInput = document.querySelector("#mail-input");
 
-    let data = {};
+    let amountPayed = document.querySelector("#paga").value;
+    let amountToPay = Number(document.querySelector("#total").textContent);
 
-    data["name"] = nameInput.value;
-    data["email"] = mailInput.value;
-    data["order"] = order;
-    data["ts"] = new Date().toISOString();
-    data["code"] = generateCode(nameInput.value) // LA CLAVE SE VERIFICA DE LA SIGUIENTE MANERA: SOLO 0-9 a-f pero la primera letra siempre coincide con la primera letra de su nombre
+    let vuelto = amountPayed - amountToPay > 0 ? amountPayed - amountToPay : 0;
+    document.querySelector("#vuelto").textContent = vuelto
 
-    addDoc(collection(db, "preorders"), data).then(() => {
-        nameInput.value = "";
-        mailInput.value = "";
-        document.querySelectorAll(".quantity span").forEach(s => s.textContent = 0);
-        document.querySelector("#total").textContent = 0;
-        // clear order
-        alert(`Listo! Clave: ${data["code"]}\nVuelto: ${document.querySelector("#vuelto").textContent}`);
-    }).catch(e => {
-        alert("ERROR, INTENTA DE NUEVO\n(porfavor saca captura y envia a Max lo siguente): " + e.message);
+    document.querySelectorAll(".quantity span").forEach(s => {
+        let name = s.parentElement.parentElement.querySelector("span.label").getAttribute("data-id")
+
+        updateDoc(doc(db, "pos_sales", name), {
+            quantity: increment(Number(s.textContent)) 
+        }).then(() => {
+            s.textContent = "0";
+        })
+
+    });
+
+    updateDoc(doc(db, "stats", "saleEvents"), {
+        amount: increment(1),
+        events: arrayUnion({_id: generateId(), saleTotal: amountToPay})
     })
+
+    alert("Listo! Entrega vuelto de: " + vuelto)
+    document.querySelector("#paga").value = 0;
+    document.querySelector("#total").textContent = "0";
+    document.querySelector("#vuelto").textContent = "0";
+
 }
 
 document.querySelector("#form").addEventListener("submit", submit);
@@ -94,7 +103,7 @@ getMenuData().then((data) => {
 
     function renderMenuItems() {
         data.forEach(item => {
-            if (!item["stock"] || !item["preorder"]) {
+            if (!item["stock"]) {
                 return;
             }
             const listItem = document.createElement('li');

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Statistics Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Styling for grid layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 2fr));
+            grid-gap: 50px;
+            padding: 40px;
+            justify-items: center;
+        }
+
+        /* Styling for statistic capsules */
+        .statistic {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Styling for statistic labels */
+        .label {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Styling for statistic values */
+        .value {
+            font-size: 36px;
+            margin-top: 10px;
+        }
+
+        /* Styling for product list */
+        .list {
+            font-size: 20px;
+            text-align: left;
+            margin-top: 20px;
+            width: 40vw
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        /* Styling for product list items */
+        .list li {
+            margin: 5px 0;
+            border: 1px black;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Statistics</h1>
+
+    <div class="grid">
+        <div class="statistic">
+            <div class="label">Overall Profit</div>
+            <div class="value" id="overallProfit">0</div>
+        </div>
+
+        <div class="statistic">
+            <div class="label">Products Sold</div>
+            <div class="value" id="productsSold">0</div>
+        </div>
+
+        <div class="statistic">
+            <div class="label">Percentage of Target Profits</div>
+            <div class="value" id="percentageOfTarget">0%</div>
+        </div>
+
+        <div class="statistic">
+            <div class="label">Amount of Sales</div>
+            <div class="value" id="amountOfSales">0</div>
+        </div>
+    </div>
+    <div class="grid">
+
+        <div class="statistic list">
+            <div class="label">List of Products and their Corresponding Amount of Sales:</div>
+            <ul id="productList">
+                <!-- Sample List Item: <li>Product Name - 10 Sales</li> -->
+            </ul>
+        </div>
+
+        <div class="statistic list">
+            <div class="label">List of Pre-orders:</div>
+            <ul id="preOrderList">
+                <!-- Sample List Item: <li>Name - ID: 123 - Contents: Product 1, Product 2</li> -->
+            </ul>
+        </div>
+    </div>
+
+</body>
+
+</html>
