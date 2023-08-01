@@ -28,11 +28,13 @@ async function submit(e) {
     e.preventDefault();
     let nameInput = document.querySelector("#name-input");
     let mailInput = document.querySelector("#mail-input");
+    let classSelect = document.querySelector("#class-select");
 
     let data = {};
 
     data["name"] = nameInput.value;
     data["email"] = mailInput.value;
+    data["class"] = classSelect.value;
     data["order"] = order;
     data["ts"] = new Date().toISOString();
     data["code"] = generateCode(nameInput.value) // LA CLAVE SE VERIFICA DE LA SIGUIENTE MANERA: SOLO 0-9 a-f pero la primera letra siempre coincide con la primera letra de su nombre
