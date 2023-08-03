@@ -69,10 +69,6 @@ async function getMenuData() {
   const cachedData = localStorage.getItem('menuData');
   const expiration = localStorage.getItem('menuDataExpiration');
 
-  if (cachedData && expiration && Date.now() < parseInt(expiration, 10)) {
-    // Data is still valid, return cached data
-    return JSON.parse(cachedData);
-  } else {
     // Data has expired or not available in local storage, fetch from API
     const docs = await getDocs(collection(db, "menu"));
     let data = [];
@@ -86,7 +82,6 @@ async function getMenuData() {
     localStorage.setItem('menuDataExpiration', expirationTime.toString());
 
     return data;
-  }
 }
 
 
