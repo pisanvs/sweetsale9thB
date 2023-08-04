@@ -100,7 +100,6 @@ document.querySelector("#paga").addEventListener("input", () => calculateChange(
 
 // Function to fetch the data and cache it in local storage with an expiration
 async function getMenuData() {
-    // TEMPORARY FIX: CACHE REMOVAL
     // Data has expired or not available in local storage, fetch from API
     const docs = await getDocs(collection(db, "menu"));
     let data = [];
