@@ -1,4 +1,5 @@
-import { collection, getDocs, query, where, doc, updateDoc, increment, arrayUnion } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, updateDoc, increment, arrayUnion } from "firebase/firestore";
+import { signOut } from "firebase/auth";
 import { auth, db } from './firebase'
 
 import "./styles/inflow.css"
@@ -10,10 +11,13 @@ auth.onAuthStateChanged(async (user) => {
         window.location = "/auth.html"
     }
 
-    console.log(user)
-
-    const querySnapshot = await getDocs(query(collection(db, "authorized_users"), where("email", "==", user.email)))
+    const querySnapshot = await getDoc(doc(db, "authorized_users", user.email))
     let isAuthorized = !querySnapshot.empty;
+    if (!isAuthorized) {
+        alert("No estas autorizado, por favor contacta a Max y dale tu correo")
+        signOut(auth)
+        window.location = "/auth.html"
+    }
 })
 
 function dec2hex(dec) {
@@ -39,7 +43,7 @@ async function submit(e) {
         let name = s.parentElement.parentElement.querySelector("span.label").getAttribute("data-id")
 
         updateDoc(doc(db, "pos_sales", name), {
-            quantity: increment(Number(s.textContent)) 
+            quantity: increment(Number(s.textContent))
         }).then(() => {
             s.textContent = "0";
         })
@@ -48,14 +52,14 @@ async function submit(e) {
 
     updateDoc(doc(db, "stats", "saleEvents"), {
         amount: increment(1),
-        events: arrayUnion({_id: generateId(), saleTotal: amountToPay})
+        events: arrayUnion({ _id: generateId(), saleTotal: amountToPay })
     })
 
     alert("Listo! Entrega vuelto de: " + vuelto)
     document.querySelector("#paga").value = 0;
     document.querySelector("#total").textContent = "0";
     document.querySelector("#vuelto").textContent = "0";
-
+    clearBills()
 }
 
 document.querySelector("#form").addEventListener("submit", submit);
@@ -73,27 +77,27 @@ document.querySelector("#paga").addEventListener("input", () => calculateChange(
 
 // Function to fetch the data and cache it in local storage with an expiration
 async function getMenuData() {
-  const cachedData = localStorage.getItem('menuData');
-  const expiration = localStorage.getItem('menuDataExpiration');
+    const cachedData = localStorage.getItem('menuData');
+    const expiration = localStorage.getItem('menuDataExpiration');
 
-  if (cachedData && expiration && Date.now() < parseInt(expiration, 10)) {
-    // Data is still valid, return cached data
-    return JSON.parse(cachedData);
-  } else {
-    // Data has expired or not available in local storage, fetch from API
-    const docs = await getDocs(collection(db, "menu"));
-    let data = [];
-    docs.forEach(doc => {
-        data.push(doc.data());
-    });
+    if (cachedData && expiration && Date.now() < parseInt(expiration, 10)) {
+        // Data is still valid, return cached data
+        return JSON.parse(cachedData);
+    } else {
+        // Data has expired or not available in local storage, fetch from API
+        const docs = await getDocs(collection(db, "menu"));
+        let data = [];
+        docs.forEach(doc => {
+            data.push(doc.data());
+        });
 
-    // Cache the data in local storage with an expiration of, for example, 1 hour (3600 seconds)
-    const expirationTime = Date.now() + 3600 * 1000;
-    localStorage.setItem('menuData', JSON.stringify(data));
-    localStorage.setItem('menuDataExpiration', expirationTime.toString());
+        // Cache the data in local storage with an expiration of, for example, 1 hour (3600 seconds)
+        const expirationTime = Date.now() + 3600 * 1000;
+        localStorage.setItem('menuData', JSON.stringify(data));
+        localStorage.setItem('menuDataExpiration', expirationTime.toString());
 
-    return data;
-  }
+        return data;
+    }
 }
 
 
@@ -150,3 +154,52 @@ getMenuData().then((data) => {
 
     renderMenuItems();
 })
+
+
+const bills = document.querySelectorAll('.bill-container');
+
+bills.forEach((bill) => {
+    const plusButton = bill.querySelector('.plus');
+    const minusButton = bill.querySelector('.minus');
+    const indicator = bill.querySelector('.bill-count');
+
+    let billCount = 0;
+
+    plusButton.addEventListener('click', () => {
+        billCount++;
+        updateIndicator();
+    });
+
+    minusButton.addEventListener('click', () => {
+        if (billCount > 0) {
+            billCount--;
+            updateIndicator();
+        }
+    });
+
+    function updateIndicator() {
+        indicator.textContent = billCount;
+        calculateTotal();
+    }
+});
+
+function calculateTotal() {
+    const billCounts = Array.from(document.querySelectorAll('.bill-count'))
+        .map(indicator => parseInt(indicator.textContent));
+
+    const denominations = [1000, 2000, 5000, 10000, 100, 500];
+    let total = 0;
+
+    for (let i = 0; i < billCounts.length; i++) {
+        total += denominations[i] * billCounts[i];
+    }
+    document.querySelector("#paga").value = total;
+    calculateChange();
+
+    return total
+}
+
+function clearBills() {
+    Array.from(document.querySelectorAll('.bill-count'))
+        .map(indicator => indicator.textContent = 0);
+}

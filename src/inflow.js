@@ -1,4 +1,5 @@
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import { collection, getDocs, addDoc, doc, getDoc } from "firebase/firestore";
 import { auth, db } from './firebase'
 
 import "./styles/inflow.css"
@@ -10,8 +11,13 @@ auth.onAuthStateChanged(async (user) => {
         window.location = "/auth.html"
     }
 
-    const querySnapshot = await getDocs(query(collection(db, "authorized_users"), where("email", "==", user.email)))
+    const querySnapshot = await getDoc(doc(db, "authorized_users", user.email))
     let isAuthorized = !querySnapshot.empty;
+    if (!isAuthorized) {
+        alert("No estas autorizado, por favor contacta a Max y dale tu correo")
+        signOut(auth)
+        window.location = "/auth.html"
+    }
 })
 
 function dec2hex(dec) {
@@ -22,6 +28,32 @@ function generateCode(name) {
     var arr = new Uint8Array((5) / 2)
     window.crypto.getRandomValues(arr)
     return (name.charAt(0) + Array.from(arr, dec2hex).join('')).toLowerCase();
+}
+
+function handleQuantityUpdate(event) {
+    const targetButton = event.target;
+    const total = document.querySelector("#total");
+    if (targetButton.classList.contains('increment') || targetButton.classList.contains('decrement')) {
+        const itemId = targetButton.getAttribute('data-id');
+        const quantityElement = targetButton.parentElement.querySelector('span');
+        let quantity = parseInt(quantityElement.textContent);
+
+        if (targetButton.classList.contains('increment')) {
+            quantity++;
+            total.textContent = Number(total.textContent) + Number(String(document.querySelector(`span[data-id="${itemId}"]`).textContent).match("\\$(\\d+)")[1])
+        } else if (targetButton.classList.contains('decrement')) {
+            quantity = Math.max(0, quantity - 1);
+            total.textContent = Number(total.textContent) - Number(String(document.querySelector(`span[data-id="${itemId}"]`).textContent).match("\\$(\\d+)")[1])
+        }
+
+        order[itemId] = quantity;
+        if (quantity == 0) {
+            delete order[itemId];
+        }
+
+        quantityElement.textContent = quantity;
+        calculateChange();
+    }
 }
 
 async function submit(e) {
@@ -44,8 +76,10 @@ async function submit(e) {
         mailInput.value = "";
         document.querySelectorAll(".quantity span").forEach(s => s.textContent = 0);
         document.querySelector("#total").textContent = 0;
+        let toString = obj => Object.entries(obj).map(([k, v]) => `${k}: ${v}`).join(', ');
+        alert(`Listo! toma un screenshot\nClave: ${data["code"]}\nVuelto: ${document.querySelector("#vuelto").textContent}\nPedido: ${toString(order)}`);
         // clear order
-        alert(`Listo! Clave: ${data["code"]}\nVuelto: ${document.querySelector("#vuelto").textContent}`);
+        order = {};
     }).catch(e => {
         alert("ERROR, INTENTA DE NUEVO\n(porfavor saca captura y envia a Max lo siguente): " + e.message);
     })
@@ -66,9 +100,6 @@ document.querySelector("#paga").addEventListener("input", () => calculateChange(
 
 // Function to fetch the data and cache it in local storage with an expiration
 async function getMenuData() {
-  const cachedData = localStorage.getItem('menuData');
-  const expiration = localStorage.getItem('menuDataExpiration');
-
     // Data has expired or not available in local storage, fetch from API
     const docs = await getDocs(collection(db, "menu"));
     let data = [];
@@ -108,31 +139,6 @@ getMenuData().then((data) => {
         });
     }
 
-    function handleQuantityUpdate(event) {
-        const targetButton = event.target;
-        const total = document.querySelector("#total");
-        if (targetButton.classList.contains('increment') || targetButton.classList.contains('decrement')) {
-            const itemId = targetButton.getAttribute('data-id');
-            const quantityElement = targetButton.parentElement.querySelector('span');
-            let quantity = parseInt(quantityElement.textContent);
-
-            if (targetButton.classList.contains('increment')) {
-                quantity++;
-                total.textContent = Number(total.textContent) + Number(String(document.querySelector(`span[data-id="${itemId}"]`).textContent).match("\\$(\\d+)")[1])
-            } else if (targetButton.classList.contains('decrement')) {
-                quantity = Math.max(0, quantity - 1);
-                total.textContent = Number(total.textContent) - Number(String(document.querySelector(`span[data-id="${itemId}"]`).textContent).match("\\$(\\d+)")[1])
-            }
-
-            order[itemId] = quantity;
-            if (quantity == 0) {
-                delete order[itemId];
-            }
-
-            quantityElement.textContent = quantity;
-            calculateChange();
-        }
-    }
 
     foodList.addEventListener('click', handleQuantityUpdate);
 
