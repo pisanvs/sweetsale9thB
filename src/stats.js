@@ -11,26 +11,28 @@ function updateStatistics(overallProfit, productsSold, productList, percentageOf
     if (amountOfSales)
         document.getElementById('amountOfSales').textContent = amountOfSales;
 
-    // Update the product list
-    if (productList) {
-        const productListElement = document.getElementById('productList');
-        productListElement.innerHTML = '';
-        productList.forEach(product => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${product.name} - ${product.sales} Sales`;
-            productListElement.appendChild(listItem);
-        });
-    }
+//    // Update the product list
+//    if (productList) {
+//        const productListElement = document.getElementById('productList');
+//        productListElement.innerHTML = '';
+//        productList.forEach(product => {
+//            const listItem = document.createElement('li');
+//            listItem.textContent = `${product.name} - ${product.sales} Sales`;
+//            productListElement.appendChild(listItem);
+//        });
+//    }
 
     // Update the pre-order list
     if (preOrderList) {
         const preOrderListElement = document.getElementById('preOrderList');
+        const preOrderAmountElement = document.getElementById('amountofpreorders');
         preOrderListElement.innerHTML = '';
         preOrderList.forEach(preOrder => {
             const listItem = document.createElement('li');
-            listItem.textContent = `${preOrder.name} - ID: ${preOrder.id} - Contents: ${preOrder.contents}`;
+            listItem.textContent = `${preOrder.name} ${preOrder.class} - Code: ${preOrder.code} - Contents: ${preOrder.contents}`;
             preOrderListElement.appendChild(listItem);
         });
+        preOrderAmountElement.textContent = preOrderList.length
     }
 }
 
@@ -39,23 +41,23 @@ onSnapshot(doc(db, "stats", "saleEvents"), (snap) => {
     updateStatistics(null, null, null, null, data["amount"], null);
 })
 
-onSnapshot(collection(db, "pos_sales"), (snap) => {
-    let sales = []
-    snap.forEach((doc) => {
-        sales.push({sales: doc.data()["quantity"], name: doc.id})
-    })
-    updateStatistics(null, null, sales, null, null, null);
-})
+//onSnapshot(collection(db, "pos_sales"), (snap) => {
+//    let sales = []
+//    snap.forEach((doc) => {
+//        sales.push({sales: doc.data()["quantity"], name: doc.id})
+//    })
+//    updateStatistics(null, null, sales, null, null, null);
+//})
 
 onSnapshot(collection(db, "preorders"), (snap) => {
     let preorders = []
     snap.forEach((doc) => {
         let data = doc.data();
         let contents = "";
-        data["order"].forEach(item => {
-            contents += item["Item"] + " x" + item["Quantity"] + "\n"
+        Object.keys(data["order"]).forEach(key => {
+            contents += key + " x" + data["order"][key] + "\n"
         })
-        preorders.push({name: data["name"], id: doc.id, contents: contents})
+        preorders.push({name: data["name"], code: doc["code"], contents: contents})
     })
     updateStatistics(null, null, null, null, null, preorders);
 })

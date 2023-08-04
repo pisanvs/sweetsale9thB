@@ -12,20 +12,62 @@
         <form id="form">
             <div>
                 <ul id="foodList">
-                    
+
                 </ul>
 
 
                 <label for="paga">Paga:</label>
-                <input type="number" name="paga" id="paga">
+                <input type="number" name="paga" id="paga" disabled>
                 <span class="receipt">MONTO FINAL: &nbsp; <span id="total">0</span></span>
                 <span class="receipt">VUELTO: &nbsp; <span id="vuelto">0</span></span>
             </div>
 
             <input type="submit" value="Listo" id="submit-btn">
         </form>
-    </div>
 
+        <div>
+            <div class="bill-selector">
+                <div class="bill-container">
+                    <span class="bill-action plus">+</span>
+                    <span class="bill-count">0</span>
+                    <img src="https://www.billetesymonedas.cl/images/Billetes/Dimensionados/1000-anverso.jpg" alt="Chilean Bill 1" class="bill-image" data-value="1000">
+                    <span class="bill-action minus">-</span>
+                </div>
+                <div class="bill-container">
+                    <span class="bill-action plus">+</span>
+                    <span class="bill-count">0</span>
+                    <img src="https://www.billetesymonedas.cl/images/Billetes/Dimensionados/2000-anverso.jpg" alt="Chilean Bill 2" class="bill-image" data-value="2000">
+                    <span class="bill-action minus">-</span>
+                </div>
+                <div class="bill-container">
+                    <span class="bill-action plus">+</span>
+                    <span class="bill-count">0</span>
+                    <img src="https://www.billetesymonedas.cl/images/Billetes/Dimensionados/5000-anverso.jpg" alt="Chilean Bill 2" class="bill-image" data-value="5000">
+                    <span class="bill-action minus">-</span>
+                </div>
+                <div class="bill-container">
+                    <span class="bill-action plus">+</span>
+                    <span class="bill-count">0</span>
+                    <img src="https://www.billetesymonedas.cl/images/Billetes/Dimensionados/10000-anverso.jpg" alt="Chilean Bill 2" class="bill-image" data-value="10000">
+                    <span class="bill-action minus">-</span>
+                </div>
+                <div class="bill-container">
+                    <span class="bill-action plus">+</span>
+                    <span class="bill-count">0</span>
+                    <img src="https://www.billetesymonedas.cl/images/Monedas/100-reverso.png" alt="Chilean Bill 2" class="bill-image" data-value="100">
+                    <span class="bill-action minus">-</span>
+                </div>
+                <div class="bill-container">
+                    <span class="bill-action plus">+</span>
+                    <span class="bill-count">0</span>
+                    <img src="https://www.billetesymonedas.cl/images/Monedas/500-reverso.png" alt="Chilean Bill 2" class="bill-image" data-value="500">
+                    <span class="bill-action minus">-</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 </body>
 
 </html>
