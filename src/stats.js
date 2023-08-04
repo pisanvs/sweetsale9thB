@@ -57,7 +57,7 @@ onSnapshot(collection(db, "preorders"), (snap) => {
         Object.keys(data["order"]).forEach(key => {
             contents += key + " x" + data["order"][key] + "\n"
         })
-        preorders.push({name: data["name"], code: doc["code"], contents: contents})
+        preorders.push({name: data["name"], class: doc["class"], code: doc["code"], contents: contents})
     })
     updateStatistics(null, null, null, null, null, preorders);
 })
