@@ -6,19 +6,19 @@ import "./styles/inflow.css"
 
 let order = {};
 
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        window.location = "/auth.html"
-    }
-
-    const querySnapshot = await getDoc(doc(db, "authorized_users", user.email))
-    let isAuthorized = !querySnapshot.empty;
-    if (!isAuthorized) {
-        alert("No estas autorizado, por favor contacta a Max y dale tu correo")
-        signOut(auth)
-        window.location = "/auth.html"
-    }
-})
+//auth.onAuthStateChanged(async (user) => {
+//    if (!user) {
+//        window.location = "/auth.html"
+//    }
+//
+//    const querySnapshot = await getDoc(doc(db, "authorized_users", user.email))
+//    let isAuthorized = !querySnapshot.empty;
+//    if (!isAuthorized) {
+//        alert("No estas autorizado, por favor contacta a Max y dale tu correo")
+//        signOut(auth)
+//        window.location = "/auth.html"
+//    }
+//})
 
 function dec2hex(dec) {
     return dec.toString(16).padStart(2, "0")
